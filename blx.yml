@@ -32,10 +32,6 @@
                     - zlib
                     - perl
                     - perl-Sys-Syslog
-          - name: Install Redhat-LSB from repo
-            yum:
-             name: http://mirror.centos.org/centos/7/os/x86_64/Packages/redhat-lsb-4.1-27.el7.centos.1.i686.rpm
-             state: present
           - name: Finding all the rpm files in the blx folder
             find:
              paths: "/root/blx-rpm-13.0-58.2508"
