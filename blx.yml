@@ -1,0 +1,51 @@
+- hosts: blx
+  remote_user: root
+  tasks:
+          - name: Check if blx already exists
+            stat:
+                    path: /root/blx-rpm-13.0-58.2508.tar.gz
+            register: stat_result
+
+          - name: copy blx files to the remote systems
+            copy:
+                src: /home/akash/Downloads/blx-rpm-13.0-58.2508.tar.gz
+                dest: /root
+            when: not stat_result.stat.exists
+
+          - name: Extract blx tar file
+            unarchive:
+                    src: /root/blx-rpm-13.0-58.2508.tar.gz
+                    dest: /root
+                    remote_src: yes
+          - name: Make sure packages/dependencies are installed
+            yum:
+                    name: "{{ packages }}"
+                    state: latest
+            vars:
+                    packages:
+                    - systemd
+                    - crontabs
+                    - ethtool
+                    - glibc
+                    - libstdc++
+                    - libgcc
+                    - zlib
+                    - perl
+                    - perl-Sys-Syslog
+          - name: Install Redhat-LSB from repo
+            yum:
+             name: http://mirror.centos.org/centos/7/os/x86_64/Packages/redhat-lsb-4.1-27.el7.centos.1.i686.rpm
+             state: present
+          - name: Finding all the rpm files in the blx folder
+            find:
+             paths: "/root/blx-rpm-13.0-58.2508"
+             patterns: "*.rpm"
+            register: rpm_files
+          - set_fact:
+             rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+          - name: Installing all the rpm files
+            yum:
+             name: "{{rpm_list}}"
+             state: present
+             enablerepo: "epel,ol7_latest"
+
