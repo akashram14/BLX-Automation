@@ -1,0 +1,15 @@
+---
+  - hosts: all
+    name: Playbook to automate blx
+    gather_facts: true
+    become: yes
+    
+    tasks:
+    - name: Get the interface
+      shell: "ifconfig | awk '{print $1;}' | head -n 1"      
+      register: res
+    
+    - debug:
+        var: res.stdout
+        
+        
