@@ -1,15 +1,37 @@
 ---
+
   - hosts: all
+    vars:
+      IP_ADDRESS: "localhost"
+
     name: Playbook to automate blx
-    gather_facts: true
+    gather_facts: false
     become: yes
     
     tasks:
     - name: Get the interface
       shell: "ifconfig | awk '{print $1;}' | head -n 1"      
-      register: res
+      register: INTERFACE
     
     - debug:
-        var: res.stdout
+        var: INTERFACE.stdout
+
         
-        
+    - name: netmask 
+      shell: ifconfig | grep -Eo "netmask [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | awk '{print $2;}' | head -n 1
+      register: netmask
+    - debug:
+        var: netmask.stdout
+
+    - name: gateway 
+      shell: route -n | awk '{print $2;}' | sed -n '3 p'
+      register: GATEWAY
+    - debug:
+        var: GATEWAY['stdout']
+    
+    - name: BLX template
+      template:
+        src: /home/snitinpandit/ansible playbooks/blx_copy.j2
+        dest: /home/snitinpandit/blx_copy
+
+    
