@@ -31,7 +31,7 @@
     
     - name: BLX template
       template:
-        src: /home/snitinpandit/ansible playbooks/blx_copy.j2
-        dest: /home/snitinpandit/blx_copy
+        src: /home/yourname/ansible playbooks/blx_copy.j2
+        dest: /home/yourname/blx_copy
 
     
