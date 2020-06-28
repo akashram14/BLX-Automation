@@ -61,7 +61,7 @@
 
     # not used currently
     - name: Fetch main interface
-      shell: "ifconfig | awk '{print $1;}' | head -n 1"      
+      shell: route | grep 'default' | awk '{ print $8 }'      
       register: INTERFACE
     - debug:
         var: INTERFACE.stdout
