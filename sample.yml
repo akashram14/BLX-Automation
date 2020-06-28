@@ -1,0 +1,26 @@
+- hosts: blx
+  remote_user: root
+  vars:
+          main_iface_name: enp0s25
+          work_process: 2
+          ip_addr: w.x.y.z
+          gateway: w.x.y.z
+
+  tasks:
+        - name: Creating new macvlan interface
+          command: ip link add newiface link {{ main_iface_name  }} type macvlan mode bridge
+
+        - name: Changing the config file.
+          lineinfile:
+                  path: /etc/blx/blx.conf
+                  regexp: '{{item.From}}'
+                  line: '{{item.To}}'
+                  state: present
+          with_items:
+                  - { From: '# worker-processes:5', To: 'worker-processes:{{work_process}}'}
+                  - { From: '# ipaddress: 7.7.7.10/24', To: 'ipaddress: {{ip_addr}}'}
+                  - { From: '# interfaces: sub_interface_name:peth1,type:macvlan,interface_name:eth1', To: ' interfaces: sub_interface_name:newiface,type:macvlan,interface_name:{{main_iface_name}}' }
+                  - { From: '# default 7.7.7.1', To: ' default {{gateway}}' }
+
+
+
