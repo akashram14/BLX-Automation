@@ -20,18 +20,18 @@
 
    # ipaddress on which blx-mgmt has to listen to. Default: blx will listen on all ipaddresses. 
    # prefix is optional. If prefix not given, it will be taken as /24.
-    ipaddress: {{IP_ADDRESS}}
+    ipaddress: {{ nsip_addr }}
 
    # interfaces or sub-interfaces that are to be dedicated for blx. Default: blx will share host traffic with all the interfaces
-    interfaces: sub_interface_name:peth1,type:macvlan,interface_name:{{INTERFACE.stdout.split(':')[0]}}
+    interfaces: sub_interface_name:{{ sub_iface }},type:macvlan,interface_name:{{ iface }}
    # interfaces: eth0.1 eth1
 
    # http and https ports to use for blx mgmt. Default mgmt-http-port:9080 and default mgmt-https-port:9443
    # NOTE: if ip addresses and interfaces are dedicated for blx, then the port definitions will be ignored.
    # the format can be either just the "port" or "ip:port". Configuring one port only doesn't open the other port. 
-    mgmt-http-port: 9080
+    mgmt-http-port: {{ mgmt_http_port }}
    # mgmt-http-port: 7.7.7.100:9080
-    mgmt-https-port: 9443
+    mgmt-https-port: {{ mgmt_https_port }}
    # mgmt-https-port: 7.7.7.100:9443
  }
 
@@ -40,7 +40,7 @@
    static-routes 
    {
   	# default route to configure in the dedicated interfaces mode
-	 default {{GATEWAY.stdout}}
+	 default {{ gateway }}
    }
 
 # This section provides nscli commands to configure blx
