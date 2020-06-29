@@ -99,4 +99,12 @@
     - name: BLX template
       template:
         src: ./blx_config.j2
-        dest: /etc/blx/blx.conf
+        dest: /etc/blx/blx.conf- name: start the blx service
+     command: systemctl start blx
+   
+    - name: status of blx service
+      command: systemctl status blx
+      register: status
+    - name: output
+      debug: var=status
+
