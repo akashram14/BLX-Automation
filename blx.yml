@@ -18,7 +18,7 @@
 
     - name: Copy blx files to the remote systems
       copy:
-        src: /home/snitinpandit/blx/blx-rpm-13.0-52.15.tar
+        src: /home/username/blx/blx-rpm-13.0-52.15.tar
         dest: /root
       when: not stat_result.stat.exists
 
