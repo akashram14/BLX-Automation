@@ -1,47 +1,118 @@
-- hosts: blx
+- hosts: all
   remote_user: root
+  become: yes
+  vars:
+    iface: "enp0s3"    # ideally, we should fetch this with Nitin's script
+    sub_iface: sub0{{ iface }}
+    
+    worker_processes: 2
+    
+    mgmt_http_port: 9080
+    mgmt_https_port: 9443
+
   tasks:
-          - name: Check if blx already exists
-            stat:
-                    path: /root/blx-rpm-13.0-58.2508.tar.gz
-            register: stat_result
+    - name: Check if blx already exists
+      stat:
+        path: /root/blx-rpm-13.0-52.15.tar
+      register: stat_result
 
-          - name: copy blx files to the remote systems
-            copy:
-                src: /home/akash/Downloads/blx-rpm-13.0-58.2508.tar.gz
-                dest: /root
-            when: not stat_result.stat.exists
+    - name: Copy blx files to the remote systems
+      copy:
+        src: /home/snitinpandit/blx/blx-rpm-13.0-52.15.tar
+        dest: /root
+      when: not stat_result.stat.exists
 
-          - name: Extract blx tar file
-            unarchive:
-                    src: /root/blx-rpm-13.0-58.2508.tar.gz
-                    dest: /root
-                    remote_src: yes
-          - name: Make sure packages/dependencies are installed
-            yum:
-                    name: "{{ packages }}"
-                    state: latest
-            vars:
-                    packages:
-                    - systemd
-                    - crontabs
-                    - ethtool
-                    - glibc
-                    - libstdc++
-                    - libgcc
-                    - zlib
-                    - perl
-                    - perl-Sys-Syslog
-          - name: Finding all the rpm files in the blx folder
-            find:
-             paths: "/root/blx-rpm-13.0-58.2508"
-             patterns: "*.rpm"
-            register: rpm_files
-          - set_fact:
-             rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
-          - name: Installing all the rpm files
-            yum:
-             name: "{{rpm_list}}"
-             state: present
-             enablerepo: "epel,ol7_latest"
+    - name: Extract blx tar file
+      unarchive:
+        src: /root/blx-rpm-13.0-52.15.tar
+        dest: /root
+        remote_src: yes
+
+    - name: Make sure packages/dependencies are installed
+      yum:
+        name: "{{ packages }}"
+        state: latest
+      vars:
+        packages:
+          - systemd
+          - httpd
+          - crontabs
+          - ethtool
+          - glibc
+          - libstdc++
+          - libgcc
+          - zlib
+          - perl
+          - perl-Sys-Syslog
+
+    - name: Finding all the rpm files in the blx folder
+      find:
+        paths: "/root/blx-rpm-13.0-52.15.tar"
+        patterns: "*.rpm"
+      register: rpm_files
+    - set_fact:
+        rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+    
+    - name: RPM files list
+      debug:
+        var: rpm_files.stdout
+    
+    - name: Installing all the rpm files
+      yum:
+        name: "{{rpm_list}}"
+        state: present
+        enablerepo: "epel,ol7_latest"
+    
+    - name: Install blx rpm files
+      shell: yum install /root/blx-rpm-13.0-52.15/blx*.rpm
+        
+    # not used currently    
+    - name: Fetch main interface
+      shell: route | grep 'default' | awk '{ print $8 }'      
+      register: INTERFACE
+    - debug:
+        var: INTERFACE.stdout
+
+    # not used currently
+    - name: Fetch netmask
+      shell: ifconfig | grep -Eo "netmask [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | awk '{print $2;}' | head -n 1
+      register: netmask
+    - debug:
+        var: netmask.stdout
+
+    # TODO: integrate this with blx config template
+    - name: Fetch default gateway
+      shell: route -n | awk '{print $2;}' | sed -n '3 p'
+      register: gateway
+    - debug:
+        var: gateway['stdout']
+
+    #- name: Create new sub-interface
+    #  become: yes
+    #  register: sub_iface_result
+    #  shell: 
+    #    cmd: ip link add {{ sub_iface }} link {{ iface  }} type macvlan mode bridge
+
+    - name: Set interface state to up
+      become: yes
+      shell:
+        cmd: ifconfig {{ sub_iface }} up
+
+    #- name: Set GRO and GSO to OFF
+    #  become: yes
+    #  shell:
+    #    cmd: ethtool -K {{ sub_iface }} gro off gso off
+
+    - name: BLX template
+      template:
+        src: ./blx.conf.j2
+        dest: /etc/blx/blx.conf
+    - name: start the blx service
+      command: systemctl start blx
+   
+    - name: status of blx service
+      command: systemctl status blx
+      register: status
+    - name: output
+      debug: var=status
 
