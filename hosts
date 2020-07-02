@@ -4,21 +4,16 @@ root@192.168.1.7
 [primary:vars]
 nsip1=192.168.1.20
 haip1=192.168.1.21
-port=9080
 port1=9080
 port2=9443
 id=2
-sip=192.0.0.3
-ip=192.168.1.50
+
 [secondary]
 localhost
 
 [secondary:vars]
 nsip1=192.168.1.21
 haip1=192.168.1.20
-port=9080
 port1=9080
 port2=9443
-sip=192.0.0.3
 id=3
-ip=192.168.1.50
