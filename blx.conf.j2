@@ -1,4 +1,3 @@
-
 #
 ###############################################################################
 
@@ -48,7 +47,5 @@
    # add ns ip 1.1.1.101 255.255.255.0
      add HA node {{id}} {{haip1}}
      set HA node -failSafe ON
-     add service s1 {{sip}} http {{port}}
-     add lb vserver v1 http {{ip}} {{port}}
-     bind lb vserver v1 s1
  }
+
