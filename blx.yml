@@ -2,7 +2,7 @@
   remote_user: root
 
   vars:
-    iface: "enp3s0"    # ideally, we should fetch this with Nitin's script
+    # iface: "enp3s0"    # ideally, we should fetch this with Nitin's script
     sub_iface: sub0{{ iface }}
     ansible_become_pass: "linux4dota"
     worker_processes: 2
@@ -62,9 +62,9 @@
     # not used currently
     - name: Fetch main interface
       shell: route | grep 'default' | awk '{ print $8 }'      
-      register: INTERFACE
+      register: iface
     - debug:
-        var: INTERFACE.stdout
+        var: iface.stdout
 
     # not used currently
     - name: Fetch netmask
@@ -83,7 +83,7 @@
     - name: Set GRO and GSO to OFF
       become: yes
       shell:
-        cmd: ethtool -K {{ iface }} gro off gso off
+        cmd: ethtool -K {{ iface.stdout }} gro off gso off
 
     - name: BLX template
       template:
