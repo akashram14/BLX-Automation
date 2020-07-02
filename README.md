@@ -12,4 +12,7 @@ The host node's ethernet interface is dynamically found out using shell commands
 
 The host's default gateway is also found in a similar manner.
 
+# Template file for blx.conf
+The blx.conf file is saved in j2 format in the management system. The IP addresses and ha commands are given as variables. These variables are defined in the playbook/hosts file.
+
 
