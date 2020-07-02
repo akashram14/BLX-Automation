@@ -1,9 +1,10 @@
 - hosts: all
   remote_user: root
   become: yes
+  gather_facts: false
   vars:
     iface: "enp0s3"    # ideally, we should fetch this with Nitin's script
-    sub_iface: sub0
+    sub_iface: subiface1
     
     worker_processes: 2
     
@@ -62,13 +63,6 @@
       shell: yum install blx*.rpm
       args:
         chdir: /root/blx-rpm-13.0-52.15/
-        
-    # not used currently    
-    - name: Fetch main interface
-      shell: route | grep 'default' | awk '{ print $8 }'      
-      register: INTERFACE
-    - debug:
-        var: INTERFACE.stdout
 
     # not used currently
     - name: Fetch netmask
@@ -84,18 +78,10 @@
     - debug:
         var: gateway['stdout']
 
-    #- name: Create new sub-interface
-    #  become: yes
-    #  register: sub_iface_result
-    #  shell: 
-    #    cmd: ip link add {{ sub_iface }} link {{ iface  }} type macvlan mode bridge
-
-    
-    #- name: Set GRO and GSO to OFF
-    #  become: yes
-    #  shell:
-    #    cmd: ethtool -K {{ sub_iface }} gro off gso off
-
+    - name: gro gso off
+      become: yes
+      shell: 
+        cmd: ethtool -K {{iface}} gro off gso off
     - name: BLX template
       template:
         src: ./blx.conf.j2
@@ -107,4 +93,5 @@
       command: systemctl status blx
       register: status
     - name: output
-      debug: var=status
+      debug: 
+        var: status['stdout']
