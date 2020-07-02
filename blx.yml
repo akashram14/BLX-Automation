@@ -80,31 +80,23 @@
     - debug:
         var: gateway['stdout']
 
-    - name: Create new sub-interface
-      become: yes
-      register: sub_iface_result
-      shell: 
-        cmd: ip link add {{ sub_iface }} link {{ iface  }} type macvlan mode bridge
-
-    - name: Set interface state to up
-      become: yes
-      shell:
-        cmd: ifconfig {{ sub_iface }} up
-
     - name: Set GRO and GSO to OFF
       become: yes
       shell:
-        cmd: sudo ethtool -K {{ sub_iface }} gro off gso off
+        cmd: ethtool -K {{ iface }} gro off gso off
 
     - name: BLX template
       template:
         src: ./blx_config.j2
-        dest: /etc/blx/blx.conf- name: start the blx service
-     command: systemctl start blx
-   
+        dest: /etc/blx/blx.conf
+
+    - name: start the blx service
+      command: systemctl start blx
+
     - name: status of blx service
       command: systemctl status blx
       register: status
+
     - name: output
       debug: var=status
 
