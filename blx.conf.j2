@@ -20,8 +20,8 @@
     ipaddress: {{nsip1}}/24
 
    # interfaces or sub-interfaces that are to be dedicated for blx. Default: blx will share host traffic with all the interfaces
-   interfaces: sub_interface_name:{{sub_iface}},type:macvlan,interface_name:{{iface}}
-   # interfaces: eth10 eth11
+   # interfaces: sub_interface_name:,type:macvlan,interface_name:
+    interfaces: {{ iface }}
 
    # http and https ports to use for blx mgmt. Default mgmt-http-port:9080 and default mgmt-https-port:9443
    # NOTE: if ip addresses and interfaces are dedicated for blx, then the port definitions will be ignored.
