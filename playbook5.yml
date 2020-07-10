@@ -59,7 +59,7 @@
     
    
     - name: Install blx rpm files
-      shell: yum install blx*.rpm
+      shell: yum install blx*.rpm -y
       args:
         chdir: /root/blx-rpm-13.0-52.15/
 
