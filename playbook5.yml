@@ -4,7 +4,6 @@
   gather_facts: false
   vars:
     iface: "enp0s3"    # ideally, we should fetch this with Nitin's script
-    sub_iface: subiface1
     
     worker_processes: 2
     
