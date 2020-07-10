@@ -2,8 +2,8 @@
 root@192.168.1.7
 
 [primary:vars]
-nsip1=192.168.1.20
-haip1=192.168.1.21
+nsip1=(systems ip)
+haip1=(other systems ip)
 port1=9080
 port2=9443
 id=2
@@ -12,8 +12,8 @@ id=2
 localhost
 
 [secondary:vars]
-nsip1=192.168.1.21
-haip1=192.168.1.20
+nsip1=#systems ip
+haip1=(other systems ip)
 port1=9080
 port2=9443
 id=3
