@@ -85,6 +85,28 @@
       template:
         src: ./blx.conf.j2
         dest: /etc/blx/blx.conf
+        
+     #
+    - name: blx cli commands template
+      template:
+        src: ./blx.conf.j2
+        dest: /etc/blx/blx.conf
+      vars:
+        #Ideally should be taken from user
+        ips:
+          - 192.168.1.10
+          - 192.168.1.11
+          - 192.168.1.12
+          - 192.168.1.13
+          - 192.168.1.14
+        ports:
+          - 81
+          - 82
+          - 83
+          - 84
+          - 85
+    
+  
     - name: start the blx service
       command: ifdown {{ iface }} && systemctl start blx
    
