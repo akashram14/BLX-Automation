@@ -21,7 +21,7 @@
 
    # interfaces or sub-interfaces that are to be dedicated for blx. Default: blx will share host traffic with all the interfaces
    # interfaces: sub_interface_name:,type:macvlan,interface_name:
-    interfaces: {{ iface }}
+    interfaces: {{ iface.stdout }}
 
    # http and https ports to use for blx mgmt. Default mgmt-http-port:9080 and default mgmt-https-port:9443
    # NOTE: if ip addresses and interfaces are dedicated for blx, then the port definitions will be ignored.
@@ -47,8 +47,10 @@
    # add ns ip 1.1.1.101 255.255.255.0
      add HA node {{id}} {{haip1}}
      set HA node -failSafe ON
+     add lb vserver v1 http {{ip}} {{port}}
      {% for s in services %}
      add service {{ s.split(';').0 }} {{ s.split(';').1 }} {{ s.split(';').2 }} {{ s.split(';').3 }}
+     bind lb vserver v1 {{ s.split(';').0 }}
      {% endfor %}
  }
 
