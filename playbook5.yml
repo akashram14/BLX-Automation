@@ -68,7 +68,12 @@
       shell: yum install blx*.rpm -y
       args:
         chdir: /root/blx-rpm-13.0-52.15/
-
+    # not used currently
+    - name: Fetch main interface
+      shell: route | grep 'default' | awk '{ print $8 }'      
+      register: iface
+    - debug:
+        var: iface.stdout
     # not used currently
     - name: Fetch netmask
       shell: ifconfig | grep -Eo "netmask [0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" | awk '{print $2;}' | head -n 1
