@@ -47,5 +47,8 @@
    # add ns ip 1.1.1.101 255.255.255.0
      add HA node {{id}} {{haip1}}
      set HA node -failSafe ON
+     {% for item in ips|zip(ports)|list %}
+      add service s{{item.1}} {{item.0}} http {{item.1}}
+     {% endfor %}
  }
 
