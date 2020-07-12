@@ -1,4 +1,8 @@
 - hosts: all
+  vars_prompt:
+          - name: services1
+            prompt: "Enter the list of services like this name_of_service;IP_addr;type_of_service;port separated by comma"
+            private: no
   remote_user: root
   become: yes
   gather_facts: false
