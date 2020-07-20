@@ -104,7 +104,12 @@
         dest: /etc/blx/blx.conf    
   
     - name: start the blx service
-      command: ifdown {{ iface }} && systemctl start blx
+      command: ifdown {{ iface.stdout }} && systemctl start blx
+      hosts: primary
+      
+    - name: start the blx service
+      command: ifdown {{ iface.stdout }} && systemctl start blx
+      hosts: secondary
    
    # - name: status of blx service
    #   command: systemctl status blx
