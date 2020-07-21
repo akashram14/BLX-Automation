@@ -7,7 +7,7 @@
   become: yes
   gather_facts: false
   vars:
-    iface: "enp0s3"    # ideally, we should fetch this with Nitin's script
+   # iface: "enp0s3"    # ideally, we should fetch this with Nitin's script
     
     worker_processes: 2
     
@@ -91,7 +91,7 @@
     - name: gro gso off
       become: yes
       shell: 
-        cmd: ethtool -K {{iface}} gro off gso off
+        cmd: ethtool -K {{iface.stdout}} gro off gso off
     - name: BLX template
       template:
         src: ./blx.conf.j2
