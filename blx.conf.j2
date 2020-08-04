@@ -49,8 +49,10 @@
      set HA node -failSafe ON
      add lb vserver v1 http {{ip}} {{port}}
      {% for s in services %}
-     add service {{ s.split(';').0 }} {{ s.split(';').1 }} {{ s.split(';').2 }} {{ s.split(';').3 }}
-     bind lb vserver v1 {{ s.split(';').0 }}
+     	{% if not s[0] == '#' %}
+     		add service {{ s.split(';').0 }} {{ s.split(';').1 }} {{ s.split(';').2 }} {{ s.split(';').3 }}
+     		bind lb vserver v1 {{ s.split(';').0 }}
+	{% endif %}
      {% endfor %}
  }
 
