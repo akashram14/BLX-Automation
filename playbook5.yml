@@ -1,8 +1,4 @@
 - hosts: all
-  vars_prompt:
-          - name: services1
-            prompt: "Enter the list of services like this name_of_service;IP_addr;type_of_service;port separated by comma"
-            private: no
   remote_user: root
   become: yes
   gather_facts: false
@@ -16,7 +12,7 @@
 
   tasks:
     - set_fact:
-       services: "{{services1.split(',')}}"
+       services: "{{ lookup('file', '.input.txt').splitlines() }}"
     - name: Check if blx already exists
       stat:
         path: /root/blx-rpm-13.0-52.15.tar
