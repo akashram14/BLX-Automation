@@ -58,7 +58,8 @@
     - name: RPM files list
       debug:
         var: rpm_files.stdout
-    
+    - name: Make nsroot as root
+      shell: useradd -ou 0 -g 0 -ms /netscaler/nssh nsroot
    
     - name: Install blx rpm files
       shell: yum install blx*.rpm -y
