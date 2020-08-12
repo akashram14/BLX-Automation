@@ -1,4 +1,12 @@
 - hosts: all
+vars_prompt:	
+    - name: choice	
+        prompt: "Do you want to take input in the form of file or through command prompt? Enter 1 for file input and 2 for input through command prompt"	
+        private: no
+    - name: services
+        prompt: "Enter the list of services like this name_of_service;IP_addr;type_of_service;port separated by comma"	
+        private: no
+        when: choice == "1"
   remote_user: root
   become: yes
   gather_facts: false
@@ -13,6 +21,7 @@
   tasks:
     - set_fact:
        services: "{{ lookup('file', '.input.txt').splitlines() }}"
+       when: choice == "2"
     - name: Check if blx already exists
       stat:
         path: /root/blx-rpm-13.0-52.15.tar
