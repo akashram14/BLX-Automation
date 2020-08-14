@@ -27,7 +27,7 @@
       when: choice.user_input == "2"
 
     - set_fact:
-       services: "{{ prompt.user_input }}"
+       services: "{{ prompt.user_input.split(',') }}"
       when:  choice.user_input == "1"
 
     - debug: var=services
