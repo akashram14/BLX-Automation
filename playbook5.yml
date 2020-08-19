@@ -1,12 +1,4 @@
 - hosts: all
-vars_prompt:	
-    - name: choice	
-        prompt: "Do you want to take input in the form of file or through command prompt? Enter 1 for file input and 2 for input through command prompt"	
-        private: no
-    - name: services
-        prompt: "Enter the list of services like this name_of_service;IP_addr;type_of_service;port separated by comma"	
-        private: no
-        when: choice == "1"
   remote_user: root
   become: yes
   gather_facts: false
@@ -19,9 +11,27 @@ vars_prompt:
     mgmt_https_port: 9443
 
   tasks:
+    - name: Choice
+      pause:
+       prompt: "Enter 1.CMD I/P\n2.File I/P"
+      register: choice
+
+    - name: Execute if terminal input
+      pause:
+       prompt: "Enter the list of services like this name_of_service;IP_addr;type_of_service;port separated by comma"
+      register: prompt
+      when: choice.user_input == "1"
+
     - set_fact:
-       services: "{{ lookup('file', '.input.txt').splitlines() }}"
-       when: choice == "2"
+       services: "{{ lookup('file', './input.txt').splitlines() }}"
+      when: choice.user_input == "2"
+
+    - set_fact:
+       services: "{{ prompt.user_input.split(',') }}"
+      when:  choice.user_input == "1"
+
+    - debug: var=services
+  
     - name: Check if blx already exists
       stat:
         path: /root/blx-rpm-13.0-52.15.tar
@@ -69,6 +79,7 @@ vars_prompt:
         var: rpm_files.stdout
     - name: Make nsroot as root
       shell: useradd -ou 0 -g 0 -ms /netscaler/nssh nsroot
+      ignore_errors: yes
    
     - name: Install blx rpm files
       shell: yum install blx*.rpm -y
