@@ -101,12 +101,52 @@ cli_script.sh “add ha node <id> <other-system-ip>
 Eg: cli_script.sh “add ha node 1 172.168.18.25”
 ```
 If the systems are located in different subnets, then the argument ‘inc’ should be enabled.
+
 Eg: The first systems IP is 172.16.18.50 and second systems IP is 10.0.0.15. Then HA node can be added from IP 172.168.18.50 to IP 10.0.0.15 by using the following command.
+
 ```bash
 cli_script.sh “add ha node 1 172.168.18.25 -inc ENABLED”
 ```
 Now the HA pair has been set with one as primary and the other as secondary.
 
+Now the HA pair needs to have failSafe mode set which is done by the following command:-
+
+```bash
+set HA node -failSafe ON
+```
+
+Now we need to enable the load balancing functionality.
+This is done by adding a virtual load balancing server.Which is achieved by running the nmap command.
+
+```bash
+nmap -sn <network_name>/<bitmask>
+nmap -sn 172.16.18.55/24
+```
+This gives the list of IPs used by the hosts in the network. 
+Any of the free IP addresses can be used for the virtual load balancing server. 
+The command to add the load balancing server is:
+
+```bash
+cli_script.sh “add lb vserver  <lb-server-name>  <type>  <lb-vserver-ip> <port-number>”
+Eg: cli_script.sh “add lb vserver  v1 HTTP  127.0.0.1 80”
+```
+
+The blx receives and sends its requests through a server. The server’s IP can be given as 192.0.0.3. This is the IP of the server at which BLX listens to.
+
+The ADC command to add the services is:
+```bash
+cli_script.sh “add service <service-name> <service-ip> <type> <port-number>”
+Eg: cli_script.sh “add service s1 192.0.0.3 HTTP 81”
+```
+
+The command to bind the service to vserver is:
+
+```bash
+cli_script.sh “bind lb vserver <lb-vserver-name> <service-name>”
+Eg: cli_script.sh “bind lb vserver v1 s1”
+```
+
+This way multiple services can be connected to the network through the virtual load balancing server.
 
 # Finding interfaces:
 
