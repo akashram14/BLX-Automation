@@ -75,6 +75,23 @@ The default path to blx.conf is
 /etc/blx/blx.conf
 ```
 
+Along with specifying the free ip in the blx.conf file we need to configure a dedicated interface or a sub interface for the blx to start in dedicated mode.
+The number of worker processes must be uncommented.
+
+Now we need to stop and again start blx.
+```bash
+systemctl stop blx
+systemctl start blx
+```
+Now the blx will start in dedicated mode and this can be reconfirmed by typing the following command in the command prompt:-
+```bash
+cli_script.sh "show_ip"
+```
+This prints out a table showing the netscalar ip as the ip address that we has given in the blx.conf file.
+
+Now we have blx up and running in dedicated mode.
+So now we need to set up the HA functionality in blx.
+
 # Finding interfaces:
 
 The host node's ethernet interface is dynamically found out using shell commands and some regular expressions.
