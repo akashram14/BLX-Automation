@@ -92,6 +92,22 @@ This prints out a table showing the netscalar ip as the ip address that we has g
 Now we have blx up and running in dedicated mode.
 So now we need to set up the HA functionality in blx.
 
+# Setting up a HA pair
+Now we need to set up HA in the two systems having blx configured in dedicated mode.
+ The IPs of each system are given to each other. The command used for this step is:
+
+```bash
+cli_script.sh “add ha node <id> <other-system-ip> 
+Eg: cli_script.sh “add ha node 1 172.168.18.25”
+```
+If the systems are located in different subnets, then the argument ‘inc’ should be enabled.
+Eg: The first systems IP is 172.16.18.50 and second systems IP is 10.0.0.15. Then HA node can be added from IP 172.168.18.50 to IP 10.0.0.15 by using the following command.
+```bash
+cli_script.sh “add ha node 1 172.168.18.25 -inc ENABLED”
+```
+Now the HA pair has been set with one as primary and the other as secondary.
+
+
 # Finding interfaces:
 
 The host node's ethernet interface is dynamically found out using shell commands and some regular expressions.
