@@ -119,6 +119,9 @@
       template:
         src: ./blx.conf.j2
         dest: /etc/blx/blx.conf    
+        
+    - name: Turn off firewall
+      shell: systemctl disable --now firewalld
   
     - name: start the blx service
       shell: ifdown {{ iface.stdout }} && systemctl start blx
