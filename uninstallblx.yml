@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: False
+  tasks:
+  - name: check if blx is there
+    command: systemctl stop blx
+    register: v
+    ignore_errors: yes
+  
+  - name: output of the previous command
+    debug:
+      var: v
+   
+  - name: remove blx if it is present
+    command: yum remove blx -y
+    when : v.stderr==""
